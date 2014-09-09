@@ -2,6 +2,7 @@
  * Software License Agreement (BSD License)
  *
  *  Point Cloud Library (PCL) - www.pointclouds.org
+ *  Copyright (c) 2010-2011, Willow Garage, Inc.
  *
  *  All rights reserved.
  *
@@ -33,3 +34,27 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *
  */
+  
+#include <pcl_ml/point_xy_32f.h>
+
+#include <istream>
+#include <ostream>
+
+///////////////////////////////////////////////////////////////////////////////
+//pcl::PointXY32f::~PointXY32f () 
+//{
+//}
+
+///////////////////////////////////////////////////////////////////////////////
+pcl_ml::PointXY32f
+pcl_ml::PointXY32f::randomPoint (const int min_x, const int max_x, const int min_y, const int max_y)
+{
+  const float width = static_cast<float> (max_x - min_x);
+  const float height = static_cast<float> (max_y - min_y);
+
+  PointXY32f point;
+  point.x = width * static_cast<float> (rand ()) / static_cast<float> (RAND_MAX) + static_cast<float> (min_x);
+  point.y = height * static_cast<float> (rand ()) / static_cast<float> (RAND_MAX) + static_cast<float> (min_y);
+
+  return point;
+}

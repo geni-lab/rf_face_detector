@@ -2,6 +2,7 @@
  * Software License Agreement (BSD License)
  *
  *  Point Cloud Library (PCL) - www.pointclouds.org
+ *  Copyright (c) 2010-2011, Willow Garage, Inc.
  *
  *  All rights reserved.
  *
@@ -33,3 +34,39 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *
  */
+
+#ifndef PCL_ML_DT_DECISION_FOREST_TRAINER_HPP_
+#define PCL_ML_DT_DECISION_FOREST_TRAINER_HPP_
+  
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+template <class FeatureType, class DataSet, class LabelType, class ExampleIndex, class NodeType>
+pcl_ml::DecisionForestTrainer<FeatureType, DataSet, LabelType, ExampleIndex, NodeType>::DecisionForestTrainer ()
+  : num_of_trees_to_train_ (1)
+  , decision_tree_trainer_ ()
+{
+  
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+template <class FeatureType, class DataSet, class LabelType, class ExampleIndex, class NodeType>
+pcl_ml::DecisionForestTrainer<FeatureType, DataSet, LabelType, ExampleIndex, NodeType>::~DecisionForestTrainer ()
+{
+  
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+template <class FeatureType, class DataSet, class LabelType, class ExampleIndex, class NodeType>
+void
+pcl_ml::DecisionForestTrainer<FeatureType, DataSet, LabelType, ExampleIndex, NodeType>::train (
+  pcl_ml::DecisionForest<NodeType> & forest)
+{
+  for (size_t tree_index = 0; tree_index < num_of_trees_to_train_; ++tree_index)
+  {
+    pcl_ml::DecisionTree<NodeType> tree;
+    decision_tree_trainer_.train (tree);
+
+    forest.push_back (tree);
+  }
+}
+
+#endif

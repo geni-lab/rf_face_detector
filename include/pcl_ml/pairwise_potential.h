@@ -32,4 +32,57 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  *
+ * Author : Christian Potthast
+ * Email  : potthast@usc.edu
+ *
  */
+
+#ifndef PCL_PAIRWISE_POTENTIAL_H_
+#define PCL_PAIRWISE_POTENTIAL_H_
+
+#include <vector>
+
+#include <pcl_ml/permutohedral.h>
+
+namespace pcl_ml
+{
+  /** \brief
+   * 
+   */
+  class PairwisePotential
+  {
+    public:
+
+      /** \brief Constructor for DenseCrf class */
+      PairwisePotential (const std::vector<float> &feature, const int D, const int N, const float w);
+
+      /** \brief Deconstructor for DenseCrf class */
+      ~PairwisePotential () {};
+
+      /** \brief  */
+      void
+      compute (std::vector<float> &out, const std::vector<float> &in,
+               std::vector<float> &tmp, int value_size) const;
+
+    protected:
+      /** \brief Permutohedral lattice */
+      Permutohedral lattice_;
+
+      /** \brief Number of variables */
+      int N_;
+
+      /** \brief weight */
+      float w_;
+
+      /** \brief norm */
+      std::vector<float> norm_;
+
+      //DBUG
+    public:
+      std::vector<float> bary_;
+      std::vector<float> features_;
+
+  };
+}
+
+#endif

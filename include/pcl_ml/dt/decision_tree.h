@@ -2,6 +2,7 @@
  * Software License Agreement (BSD License)
  *
  *  Point Cloud Library (PCL) - www.pointclouds.org
+ *  Copyright (c) 2010-2011, Willow Garage, Inc.
  *
  *  All rights reserved.
  *
@@ -33,3 +34,72 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *
  */
+  
+#ifndef PCL_ML_DT_DECISION_TREE
+#define PCL_ML_DT_DECISION_TREE
+
+#include <pcl/common/common.h>
+
+#include <istream>
+#include <ostream>
+
+namespace pcl_ml
+{
+
+  /** \brief Class representing a decision tree. */
+  template <class NodeType>
+  class PCL_EXPORTS DecisionTree
+  {
+  
+    public:
+
+      /** \brief Constructor. */
+      DecisionTree () : root_ () {}
+      /** \brief Destructor. */
+      virtual 
+      ~DecisionTree () {}
+
+      /** \brief Sets the root node of the tree.
+        * \param[in] root The root node.
+        */
+      void
+      setRoot (const NodeType & root)
+      {
+        root_ = root;
+      }
+
+      /** \brief Returns the root node of the tree. */
+      NodeType &
+      getRoot ()
+      {
+        return root_;
+      }
+
+      /** \brief Serializes the decision tree. 
+        * \param[out] stream The destination for the serialization.
+        */
+      void 
+      serialize (::std::ostream & stream) const
+      {
+        root_.serialize (stream);
+      }
+
+      /** \brief Deserializes the decision tree. 
+        * \param[in] stream The source for the deserialization.
+        */
+      void deserialize (::std::istream & stream)
+      {
+        root_.deserialize (stream);
+      }
+
+    private:
+
+      /** \brief The root node of the decision tree. */
+      NodeType root_;
+
+  };
+
+
+}
+
+#endif

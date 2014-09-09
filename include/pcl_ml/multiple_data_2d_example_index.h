@@ -2,6 +2,7 @@
  * Software License Agreement (BSD License)
  *
  *  Point Cloud Library (PCL) - www.pointclouds.org
+ *  Copyright (c) 2010-2011, Willow Garage, Inc.
  *
  *  All rights reserved.
  *
@@ -33,3 +34,30 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *
  */
+  
+#ifndef PCL_ML_MULTIPLE_DATA_2D_EXAMPLE_INDEX_H_
+#define PCL_ML_MULTIPLE_DATA_2D_EXAMPLE_INDEX_H_
+
+#include <pcl/common/common.h>
+
+#include <istream>
+#include <ostream>
+
+namespace pcl_ml
+{
+
+  /** \brief Example index for a set of 2D data blocks. */
+  struct MultipleData2DExampleIndex
+  {
+    /** \brief The data set index. */
+    int data_set_id;
+
+    /** \brief The x-coordinate. */
+    int x;
+    /** \brief The y-coordinate. */
+    int y;
+  };
+
+}
+
+#endif

@@ -2,6 +2,7 @@
  * Software License Agreement (BSD License)
  *
  *  Point Cloud Library (PCL) - www.pointclouds.org
+ *  Copyright (c) 2010-2011, Willow Garage, Inc.
  *
  *  All rights reserved.
  *
@@ -33,3 +34,41 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *
  */
+
+#ifndef DECISION_TREE_DATA_PROVIDER_H_
+#define DECISION_TREE_DATA_PROVIDER_H_
+
+#include <pcl/common/common.h>
+
+namespace pcl_ml
+{
+  template<class FeatureType, class DataSet, class LabelType, class ExampleIndex, class NodeType>
+  class PCL_EXPORTS DecisionTreeTrainerDataProvider
+  {
+
+      /** \brief The training data set. */
+      DataSet data_set_;
+      /** \brief The label data. */
+      std::vector<LabelType> label_data_;
+
+    public:
+
+      /** \brief Constructor. */
+      DecisionTreeTrainerDataProvider()
+      {
+
+      }
+
+      /** \brief Destructor. */
+      ~DecisionTreeTrainerDataProvider()
+      {
+
+      }
+
+      /** \brief Virtual function called to obtain training examples and labels before training a specific tree */
+      virtual void
+      getDatasetAndLabels(DataSet & data_set, std::vector<LabelType> & label_data, std::vector<ExampleIndex> & examples) = 0;
+  };
+}
+
+#endif /* DECISION_TREE_DATA_PROVIDER_H_ */
