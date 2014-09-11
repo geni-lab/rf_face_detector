@@ -3,10 +3,10 @@
         <param name="point_cloud_topic" type="string" value="/softkinetic_camera/depth_registered/points" />
         <param name="forest_fn" type="string" value="$(find rf_face_detector)/launch/forest_example.txt" />
         <param name="model_path" type="string" value="$(find rf_face_detector)/launch/model.pcd" />
-        <param name="max_variance" type="float" value="1600" />
+        <param name="max_variance" type="double" value="1600" />
         <param name="min_votes_size" type="int" value="300" />
         <param name="use_normals" type="bool" value="false" />
-        <param name="face_threshold" type="float" value="0.99" />
+        <param name="face_threshold" type="double" value="0.99" />
         <param name="stride_sw" type="int" value="4" />
         <param name="pose_refinement" type="bool" value="false" />
         <param name="icp_iterations" type="int" value="5" />

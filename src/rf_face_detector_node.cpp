@@ -63,6 +63,7 @@ typedef pcl::PointCloud<pcl::PointXYZ> PointCloud;
 
 rf_face_detector::FaceList face_list_msg;
 ros::Publisher pub_face_list;
+ros::Publisher pub_heat_map;
 
 
 void point_cloud_callback(const sensor_msgs::PointCloud2ConstPtr & msg)
@@ -80,6 +81,20 @@ void point_cloud_callback(const sensor_msgs::PointCloud2ConstPtr & msg)
     fdrf.detectFaces();
     std::vector<Eigen::VectorXf> heads;
     fdrf.getDetectedFaces(heads);
+
+    // Publish heat map
+    pcl::PointCloud<pcl::PointXYZI>::Ptr intensity_cloud (new pcl::PointCloud<pcl::PointXYZI>);
+    fdrf.getFaceHeatMap(intensity_cloud);
+
+    pcl::PCLPointCloud2 intensity_cloud_2;
+    pcl::toPCLPointCloud2(*intensity_cloud, intensity_cloud_2);
+
+
+    sensor_msgs::PointCloud2 intensity_msg;
+    intensity_msg.header.frame_id = msg->header.frame_id;
+    intensity_msg.header.stamp = msg->header.stamp;
+    pcl_conversions::fromPCL(intensity_cloud_2, intensity_msg);
+    pub_heat_map.publish(intensity_msg);
 
     for (size_t i = 0; i < heads.size(); i++)
     {
@@ -170,6 +185,7 @@ int main(int argc, char ** argv)
 
         sub_cloud = nh.subscribe(point_cloud_topic, 1, point_cloud_callback);
         pub_face_list = nh.advertise<rf_face_detector::FaceList>("rf_face_detector/detected_faces", 1);
+        pub_heat_map = nh.advertise<sensor_msgs::PointCloud2>("rf_face_detector/heat_map", 1);
         ROS_INFO("Running");
         ros::spin();
     }

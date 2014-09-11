@@ -1,4 +1,0 @@
-- git: {local-name: ros_pololu_servo, uri: https://github.com/geni-lab/ros_pololu_servo.git, version: master}
-- git: {local-name: ros_bge_bridge, uri: https://github.com/geni-lab/ros_bge_bridge.git, version: master}
-- git: {local-name: hri, uri: https://github.com/jdddog/hri.git, version: master}
-- git: {local-name: zoidstein_robot, uri: https://github.com/geni-lab/zoidstein_robot.git, version: master}
