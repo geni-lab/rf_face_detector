@@ -1,8 +1,8 @@
 <launch>
     <node pkg="rf_face_detector" type="rf_face_detector_node" name="rf_face_detector_node" output="screen">
         <param name="point_cloud_topic" type="string" value="/softkinetic_camera/depth_registered/points" />
-        <param name="forest_fn" type="string" value="$(find pcl_data)/biwi_face_database/forest_example.txt.bz2" />
-        <param name="model_path" type="string" value="$(find pcl_data)/biwi_face_database/model.pcd" />
+        <param name="forest_fn" type="string" value="$(find rf_face_detector)/launch/forest_example.txt" />
+        <param name="model_path" type="string" value="$(find rf_face_detector)/launch/model.pcd" />
         <param name="max_variance" type="float" value="1600" />
         <param name="min_votes_size" type="int" value="300" />
         <param name="use_normals" type="bool" value="false" />

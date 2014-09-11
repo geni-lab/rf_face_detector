@@ -40,13 +40,13 @@
 #ifndef PCL_RF_FACE_UTILS_H_
 #define PCL_RF_FACE_UTILS_H_
 
-#include <rf_face_detector/face_common.h>
+#include <face_detection/face_common.h>
 #include <pcl_ml/feature_handler.h> //TODO: include in project
 #include <pcl_ml/stats_estimator.h> //TODO: include in project
 #include <pcl_ml/branch_estimator.h> //TODO: include in project
 
 
-  namespace rf_face_detector
+  namespace face_detection
   {
     template<class FT, class DataSet, class ExampleIndex>
     class FeatureHandlerDepthAverage: public pcl_ml::FeatureHandler<FT, DataSet, ExampleIndex>
@@ -230,7 +230,7 @@
 
       public:
         /** \brief Constructor. */
-        PoseClassRegressionVarianceStatsEstimator(BranchEstimator * branch_estimator) :
+        PoseClassRegressionVarianceStatsEstimator(pcl_ml::BranchEstimator * branch_estimator) :
             branch_estimator_ (branch_estimator)
         {
         }

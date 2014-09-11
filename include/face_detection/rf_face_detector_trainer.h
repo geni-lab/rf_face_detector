@@ -40,13 +40,16 @@
 #ifndef PCL_RF_FACE_DETECTOR_TRAINER_H_
 #define PCL_RF_FACE_DETECTOR_TRAINER_H_
 
-#include <rf_face_detector/face_detector_data_provider.h>
-#include <rf_face_detector/rf_face_utils.h>
-#include "pcl/ml/dt/decision_forest.h" //TODO: include in project
+#include <face_detection/face_detector_data_provider.h>
+#include <face_detection/rf_face_utils.h>
+#include <pcl_ml/dt/decision_forest.h>
 #include <pcl/features/integral_image2D.h>
 
 
-  class PCL_EXPORTS RFFaceDetectorTrainer
+namespace face_detection
+{
+
+  class RFFaceDetectorTrainer
   {
     private:
       int w_size_;
@@ -72,8 +75,8 @@
       std::vector<Eigen::Vector3f> head_clusters_centers_;
       std::vector<Eigen::Vector3f> head_clusters_rotation_;
 
-      pcl_ml::PointCloud<pcl_ml::PointXYZ>::Ptr input_;
-      pcl_ml::PointCloud<pcl_ml::PointXYZI>::Ptr face_heat_map_;
+      pcl::PointCloud<pcl::PointXYZ>::Ptr input_;
+      pcl::PointCloud<pcl::PointXYZI>::Ptr face_heat_map_;
 
       typedef face_detection::RFTreeNode<face_detection::FeatureType> NodeType;
       pcl_ml::DecisionForest<NodeType> forest_;
@@ -82,7 +85,7 @@
       bool pose_refinement_;
       int icp_iterations_;
 
-      pcl_ml::PointCloud<pcl_ml::PointXYZ>::Ptr model_original_;
+      pcl::PointCloud<pcl::PointXYZ>::Ptr model_original_;
       float res_;
 
     public:
@@ -201,13 +204,13 @@
        * Get functions
        */
 
-      void getFaceHeatMap(pcl_ml::PointCloud<pcl_ml::PointXYZI>::Ptr & heat_map)
+      void getFaceHeatMap(pcl::PointCloud<pcl::PointXYZI>::Ptr & heat_map)
       {
         heat_map = face_heat_map_;
       }
 
       //get votes
-      void getVotes(pcl_ml::PointCloud<pcl_ml::PointXYZ>::Ptr & votes_cloud)
+      void getVotes(pcl::PointCloud<pcl::PointXYZ>::Ptr & votes_cloud)
       {
         votes_cloud->points.resize (head_center_votes_.size ());
         votes_cloud->width = static_cast<int>(head_center_votes_.size ());
@@ -219,7 +222,7 @@
         }
       }
 
-      void getVotes(pcl_ml::PointCloud<pcl_ml::PointXYZI>::Ptr & votes_cloud)
+      void getVotes(pcl::PointCloud<pcl::PointXYZI>::Ptr & votes_cloud)
       {
         votes_cloud->points.resize (head_center_votes_.size ());
         votes_cloud->width = static_cast<int>(head_center_votes_.size ());
@@ -238,7 +241,7 @@
         votes_cloud->points.resize (p);
       }
 
-      void getVotes2(pcl_ml::PointCloud<pcl_ml::PointXYZI>::Ptr & votes_cloud)
+      void getVotes2(pcl::PointCloud<pcl::PointXYZI>::Ptr & votes_cloud)
       {
         votes_cloud->points.resize (head_center_votes_.size ());
         votes_cloud->width = static_cast<int>(head_center_votes_.size ());
@@ -275,12 +278,12 @@
       /*
        * Other functions
        */
-      void setInputCloud(pcl_ml::PointCloud<pcl_ml::PointXYZ>::Ptr & cloud)
+      void setInputCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr & cloud)
       {
         input_ = cloud;
       }
 
-      void setFaceHeatMapCloud(pcl_ml::PointCloud<pcl_ml::PointXYZI>::Ptr & heat_map)
+      void setFaceHeatMapCloud(pcl::PointCloud<pcl::PointXYZI>::Ptr & heat_map)
       {
         face_heat_map_ = heat_map;
       }
@@ -289,6 +292,8 @@
       void faceVotesClustering();
       void detectFaces();
   };
+
+}
 
 
 #endif /* PCL_RF_FACE_DETECTOR_TRAINER_H_ */

@@ -108,7 +108,7 @@ pcl_ml::DecisionTreeTrainer<FeatureType, DataSet, LabelType, ExampleIndex, NodeT
   const size_t num_of_examples = examples.size ();
   if (num_of_examples == 0)
   {
-    PCL_ERROR ("Reached invalid point in decision tree training: Number of examples is 0!");
+    //ROS_ERROR("Reached invalid point in decision tree training: Number of examples is 0!");
     return;
   };
 

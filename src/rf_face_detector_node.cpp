@@ -41,32 +41,61 @@
 #include <sensor_msgs/PointCloud2.h>
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/point_types.h>
-#include <rf_face_detector/rf_face_detector_trainer.h>
+#include <face_detection/rf_face_detector_trainer.h>
 #include <boost/iostreams/filter/bzip2.hpp>
+#include <rf_face_detector/FaceList.h>
+#include <geometry_msgs/PoseStamped.h>
+#include <geometry_msgs/Point.h>
 
 using namespace std;
 
-float trans_max_variance, face_threshold;
-int min_votes_size, stride_sw, pose_refinement, icp_iterations;
-std::string forest_fn, model_path;
+double trans_max_variance, face_threshold;
+int min_votes_size, stride_sw, icp_iterations;
+string point_cloud_topic, forest_fn, model_path;
 bool use_normals, pose_refinement;
 
-rf_face_detector::RFFaceDetectorTrainer fdrf;
-typedef rf_face_detector::RFTreeNode<rf_face_detector::FeatureType> NodeType;
+face_detection::RFFaceDetectorTrainer fdrf;
+typedef face_detection::RFTreeNode<face_detection::FeatureType> NodeType;
 pcl_ml::DecisionForest<NodeType> forest;
 
 ros::Subscriber sub_cloud;
-typedef pcl::PointCloud<pcl::PointXYZRGB> PointCloud;
+typedef pcl::PointCloud<pcl::PointXYZ> PointCloud;
+
+rf_face_detector::FaceList face_list_msg;
+ros::Publisher pub_face_list;
 
 
 void point_cloud_callback(const sensor_msgs::PointCloud2ConstPtr & msg)
 {
-    fdrf.setInputCloud(scene);
+    face_list_msg.faces.clear();
+
+    pcl::PCLPointCloud2 cloud_2;
+    PointCloud cloud;
+    pcl_conversions::toPCL(*msg, cloud_2);
+    pcl::fromPCLPointCloud2(cloud_2, cloud);
+    PointCloud::Ptr cloud_ptr(new PointCloud());
+    *cloud_ptr = cloud;
+
+    fdrf.setInputCloud(cloud_ptr);
     fdrf.detectFaces();
     std::vector<Eigen::VectorXf> heads;
     fdrf.getDetectedFaces(heads);
-    //TODO: output heads to msg
-    //TODO: publish to tf
+
+    for (size_t i = 0; i < heads.size(); i++)
+    {
+        geometry_msgs::Point point;
+        point.x = heads[i][0];
+        point.y = heads[i][1];
+        point.z = heads[i][2];
+
+        geometry_msgs::PoseStamped pose_stamped;
+        pose_stamped.header.frame_id = msg->header.frame_id;
+        pose_stamped.header.stamp = msg->header.stamp;
+        pose_stamped.pose.position = point;
+        face_list_msg.faces.push_back(pose_stamped);
+    }
+
+    pub_face_list.publish(face_list_msg);
 }
 
 int main(int argc, char ** argv)
@@ -74,31 +103,45 @@ int main(int argc, char ** argv)
     ros::init(argc, argv, "rf_face_detector");
 	ros::NodeHandle nh;
 	ros::NodeHandle nhr("~");
+	bool success = true;
 
-    if(nh.hasParam("forest_fn") && nh.hasParam("model_path"))
+	if(!nhr.hasParam("forest_fn"))
+	{
+	    ROS_ERROR("Please specify forest_fn");
+	    success = false;
+	}
+
+	if(!nhr.hasParam("model_path"))
+	{
+        ROS_ERROR("Please specify model_path");
+	    success = false;
+	}
+
+    if(success)
     {
+        ROS_INFO("Loading parameters");
         // Load parameters
         nhr.param<string>("point_cloud_topic", point_cloud_topic, "/softkinetic_camera/depth_registered/points");
         nhr.getParam("forest_fn", forest_fn); //TODO: if file ends in .bz2 then unzip it into a temp dir and feed that to frdf
         nhr.getParam("model_path", model_path);
-        nhr.param<float>("max_variance", trans_max_variance, 1600.f);
+        nhr.param<double>("max_variance", trans_max_variance, 1600.0);
         nhr.param<int>("min_votes_size", min_votes_size, 300);
         nhr.param<bool>("use_normals", use_normals, false);
-        nhr.param<float>("face_threshold", face_threshold, 0.99f);
+        nhr.param<double>("face_threshold", face_threshold, 0.99);
         nhr.param<int>("stride_sw", stride_sw, 4);
         nhr.param<bool>("pose_refinement", pose_refinement, false);
         nhr.param<int>("icp_iterations", icp_iterations, 5);
 
         ROS_INFO("point_cloud_topic: %s", point_cloud_topic.c_str());
-        ROS_INFO("forest_fn: %s",  );
-        ROS_INFO("model_path: %s", );
-        ROS_INFO("max_variance: %f", );
-        ROS_INFO("min_votes_size: %d", );
-        ROS_INFO("use_normals: %d", );
-        ROS_INFO("face_threshold: %f", );
-        ROS_INFO("stride_sw: %d", );
-        ROS_INFO("pose_refinement: %d", );
-        ROS_INFO("icp_iterations: %d", );
+        ROS_INFO("forest_fn: %s", forest_fn.c_str());
+        ROS_INFO("model_path: %s", model_path.c_str());
+        ROS_INFO("max_variance: %f", trans_max_variance);
+        ROS_INFO("min_votes_size: %d", min_votes_size);
+        ROS_INFO("use_normals: %d", use_normals);
+        ROS_INFO("face_threshold: %f", face_threshold);
+        ROS_INFO("stride_sw: %d", stride_sw);
+        ROS_INFO("pose_refinement: %d", pose_refinement);
+        ROS_INFO("icp_iterations: %d", icp_iterations);
 
         // Initialize fdrf
         ROS_INFO("Initializing frdf");
@@ -112,6 +155,7 @@ int main(int argc, char ** argv)
 
         if (pose_refinement)
         {
+
             fdrf.setPoseRefinement(true, icp_iterations);
             fdrf.setModelPath(model_path);
         }
@@ -124,15 +168,15 @@ int main(int argc, char ** argv)
         fb.close();
         fdrf.setForest(forest);
 
-        sub_pcl = nh.subscribe(point_cloud_topic, 1, point_cloud_callback);
+        sub_cloud = nh.subscribe(point_cloud_topic, 1, point_cloud_callback);
+        pub_face_list = nh.advertise<rf_face_detector::FaceList>("rf_face_detector/detected_faces", 1);
         ROS_INFO("Running");
         ros::spin();
     }
     else
     {
-        ROS_ERROR("Please specify forest_fn and model_path")
-        return -1
+        return -1;
     }
 
-    return 0
+    return 0;
 }
