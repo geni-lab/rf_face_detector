@@ -5,9 +5,10 @@ project(rf_face_detector)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  pcl
+  pcl_ros
   roscpp
   std_msgs
+  geometry_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -44,11 +45,10 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+ add_message_files(
+   FILES
+   FaceList.msg
+ )
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -65,10 +65,11 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs
-# )
+ generate_messages(
+   DEPENDENCIES
+   std_msgs
+   geometry_msgs
+)
 
 ###################################
 ## catkin specific configuration ##
@@ -81,9 +82,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-#  LIBRARIES rf_face_detector
-#  CATKIN_DEPENDS pcl roscpp std_msgs
-#  DEPENDS system_lib
+  #LIBRARIES face_detection pcl_ml
+  #CATKIN_DEPENDS pcl_ros roscpp std_msgs
+  #DEPENDS system_lib pcl_ros
 )
 
 ###########
@@ -92,7 +93,7 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-# include_directories(include)
+include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
@@ -109,9 +110,9 @@ add_library(pcl_ml
    src/pcl_ml/svm_wrapper.cpp
  )
 
-add_library(rf_face_detector
-   src/${PROJECT_NAME}/rf_face_detector_data_provider.cpp
-   src/${PROJECT_NAME}/rf_face_detector_trainer.cpp
+add_library(face_detection
+   src/face_detection/face_detector_data_provider.cpp
+   src/face_detection/rf_face_detector_trainer.cpp
  )
 
 ## Declare a cpp executable
@@ -119,13 +120,22 @@ add_executable(rf_face_detector_node src/rf_face_detector_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-#add_dependencies(rf_face_detector_node rf_face_detector_generate_messages_cpp)
+## add_dependencies(pcl_ml face_detection)
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(rf_face_detector_node
+target_link_libraries(pcl_ml
+   ${catkin_LIBRARIES}
+)
+
+target_link_libraries(face_detection
    ${catkin_LIBRARIES}
    pcl_ml
-   rf_face_detector
+)
+
+target_link_libraries(rf_face_detector_node
+   ${catkin_LIBRARIES}
+   face_detection
+   pcl_ml
 )
 
 #############

@@ -37,15 +37,15 @@
  *
  */
 
-#include <rf_face_detector/rf_face_detector_trainer.h>
-#include <rf_face_detector/face_common.h>
+#include <face_detection/rf_face_detector_trainer.h>
+#include <face_detection/face_common.h>
 //#include <pcl/recognition/hv/hv_papazov.h>
 
 
-#include "pcl/ml/dt/decision_tree_trainer.h"
-#include "pcl/ml/dt/decision_tree_evaluator.h"
-#include "pcl/ml/dt/decision_forest_trainer.h"
-#include "pcl/ml/dt/decision_forest_evaluator.h"
+#include <pcl_ml/dt/decision_tree_trainer.h>
+#include <pcl_ml/dt/decision_tree_evaluator.h>
+#include <pcl_ml/dt/decision_forest_trainer.h>
+#include <pcl_ml/dt/decision_forest_evaluator.h>
 
 #include <pcl/filters/passthrough.h>
 #include <pcl/io/pcd_io.h>
@@ -57,7 +57,7 @@
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/features/normal_3d.h>
 
-void rf_face_detector::RFFaceDetectorTrainer::trainWithDataProvider()
+void face_detection::RFFaceDetectorTrainer::trainWithDataProvider()
 {
 
   face_detection::FeatureHandlerDepthAverage<face_detection::FeatureType, std::vector<face_detection::TrainingExample>, int> fhda;
@@ -68,7 +68,7 @@ void rf_face_detector::RFFaceDetectorTrainer::trainWithDataProvider()
     fhda.setNumChannels (4);
 
   pcl_ml::TernaryTreeMissingDataBranchEstimator * btt = new pcl_ml::TernaryTreeMissingDataBranchEstimator ();
-  rf_face_detector::PoseClassRegressionVarianceStatsEstimator<float, NodeType, std::vector<face_detection::TrainingExample>, int> rse (btt);
+  face_detection::PoseClassRegressionVarianceStatsEstimator<float, NodeType, std::vector<face_detection::TrainingExample>, int> rse (btt);
 
   std::vector<float> thresholds_;
   thresholds_.push_back (0.5f);
@@ -112,7 +112,7 @@ void rf_face_detector::RFFaceDetectorTrainer::trainWithDataProvider()
   fb.close ();
 }
 
-void rf_face_detector::RFFaceDetectorTrainer::faceVotesClustering()
+void face_detection::RFFaceDetectorTrainer::faceVotesClustering()
 {
   float HEAD_DIAMETER_SQ = HEAD_ST_DIAMETER_ * HEAD_ST_DIAMETER_;
   float large_radius = HEAD_DIAMETER_SQ / (larger_radius_ratio_ * larger_radius_ratio_);
@@ -263,7 +263,7 @@ void rf_face_detector::RFFaceDetectorTrainer::faceVotesClustering()
   std::cout << "Number of heads:" << head_clusters_centers_.size () << std::endl;
 }
 
-void rf_face_detector::RFFaceDetectorTrainer::setModelPath(std::string & model)
+void face_detection::RFFaceDetectorTrainer::setModelPath(std::string & model)
 {
   model_path_ = model;
   pcl::PointCloud<pcl::PointXYZ>::Ptr model_cloud (new pcl::PointCloud<pcl::PointXYZ> ());
@@ -290,7 +290,7 @@ void rf_face_detector::RFFaceDetectorTrainer::setModelPath(std::string & model)
   }
 }
 
-void rf_face_detector::RFFaceDetectorTrainer::detectFaces()
+void face_detection::RFFaceDetectorTrainer::detectFaces()
 {
   //clear stuff from last round
   head_center_votes_.clear ();

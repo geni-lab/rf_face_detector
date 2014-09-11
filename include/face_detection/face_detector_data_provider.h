@@ -41,8 +41,8 @@
 #define FACE_DETECTOR_DATA_PROVIDER_H_
 
 #include <pcl/common/common.h>
-#include <rf_face_detector/face_common.h>
-#include <pcl_ml/dt/decision_tree_data_provider.h> //TODO: include from this project
+#include <face_detection/face_common.h>
+#include <pcl_ml/dt/decision_tree_data_provider.h>
 #include <boost/filesystem/operations.hpp>
 #include <iostream>
 #include <fstream>
@@ -52,7 +52,7 @@
 namespace bf = boost::filesystem;
 
 
-  namespace rf_face_detector
+  namespace face_detection
   {
     template<class FeatureType, class DataSet, class LabelType, class ExampleIndex, class NodeType>
     class FaceDetectorDataProvider: public pcl_ml::DecisionTreeTrainerDataProvider<FeatureType, DataSet, LabelType, ExampleIndex, NodeType>
@@ -141,7 +141,7 @@ namespace bf = boost::filesystem;
         }
 
         template<class PointInT>
-        void cropCloud(int min_col, int max_col, int min_row, int max_row, pcl_ml::PointCloud<PointInT> & cloud_in, pcl_ml::PointCloud<PointInT> & cloud_out)
+        void cropCloud(int min_col, int max_col, int min_row, int max_row, pcl::PointCloud<PointInT> & cloud_in, pcl::PointCloud<PointInT> & cloud_out)
         {
           cloud_out.width = max_col - min_col + 1;
           cloud_out.height = max_row - min_row + 1;

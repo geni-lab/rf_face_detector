@@ -38,8 +38,8 @@
  */
 
 
-#include <rf_face_detector/face_detector_data_provider.h>
-#include <rf_face_detector/face_common.h>
+#include <face_detection/face_detector_data_provider.h>
+#include <face_detection/face_common.h>
 #include <pcl/common/time.h>
 #include <pcl/features/integral_image_normal.h>
 #include <pcl/io/pcd_io.h>
@@ -52,8 +52,7 @@
 //much better solution would be pass a visualization function from the user code to make it transparent
 //to the training process
 
-namespace pcl
-{
+
   namespace face_detection
   {
     inline
@@ -80,10 +79,9 @@ namespace pcl
       }
     }
   }
-}
 
 template<class FeatureType, class DataSet, class LabelType, class ExampleIndex, class NodeType>
-void rf_face_detector::FaceDetectorDataProvider<FeatureType, DataSet, LabelType, ExampleIndex, NodeType>::initialize(std::string & data_dir)
+void face_detection::FaceDetectorDataProvider<FeatureType, DataSet, LabelType, ExampleIndex, NodeType>::initialize(std::string & data_dir)
 {
   std::string start = "";
   std::string ext = std::string ("pcd");
@@ -158,7 +156,7 @@ void rf_face_detector::FaceDetectorDataProvider<FeatureType, DataSet, LabelType,
     }
   }
 
-  rf_face_detector::showBining (num_pitch, res_pitch, min_pitch, num_yaw, res_yaw, min_yaw, yaw_pitch_bins);
+  face_detection::showBining (num_pitch, res_pitch, min_pitch, num_yaw, res_yaw, min_yaw, yaw_pitch_bins);
 
   int max_elems = 0;
   int total_elems = 0;
@@ -200,7 +198,7 @@ void rf_face_detector::FaceDetectorDataProvider<FeatureType, DataSet, LabelType,
     }
   }
 
-  rf_face_detector::showBining (num_pitch, res_pitch, min_pitch, num_yaw, res_yaw, min_yaw, yaw_pitch_bins);
+  face_detection::showBining (num_pitch, res_pitch, min_pitch, num_yaw, res_yaw, min_yaw, yaw_pitch_bins);
   std::cout << "Total number of images in the dataset:" << image_files_.size () << std::endl;
 }
 
@@ -209,7 +207,7 @@ void rf_face_detector::FaceDetectorDataProvider<FeatureType, DataSet, LabelType,
 //create training examples and labels
 
 template<class FeatureType, class DataSet, class LabelType, class ExampleIndex, class NodeType>
-void rf_face_detector::FaceDetectorDataProvider<FeatureType, DataSet, LabelType, ExampleIndex, NodeType>::getDatasetAndLabels(DataSet & data_set,
+void face_detection::FaceDetectorDataProvider<FeatureType, DataSet, LabelType, ExampleIndex, NodeType>::getDatasetAndLabels(DataSet & data_set,
     std::vector<LabelType> & label_data, std::vector<ExampleIndex> & examples)
 {
   srand (static_cast<unsigned int>(time (NULL)));
@@ -492,7 +490,7 @@ void rf_face_detector::FaceDetectorDataProvider<FeatureType, DataSet, LabelType,
 
         vis.removeAllPointClouds();
 
-        pcl::visualization::PointCloudColorHandlerGenericField < pcl_ml::PointXYZI > handler(cloud_intensity2, "intensity");
+        pcl::visualization::PointCloudColorHandlerGenericField < pcl::PointXYZI > handler(cloud_intensity2, "intensity");
         vis.addPointCloud(cloud_intensity2, handler, "cloud");
         vis.spinOnce();
         vis.spin();
@@ -530,7 +528,7 @@ void rf_face_detector::FaceDetectorDataProvider<FeatureType, DataSet, LabelType,
 
         training_examples.push_back (te);
 #if PCL_FACE_DETECTION_VIS_TRAINING_FDDP == 1
-        pcl_ml::PointCloud<pcl_ml::PointXYZI>::Ptr cloud_intensity2(new pcl_ml::PointCloud<pcl_ml::PointXYZI>(*cloud_intensity));
+        pcl::PointCloud<pcl::PointXYZI>::Ptr cloud_intensity2(new pcl::PointCloud<pcl::PointXYZI>(*cloud_intensity));
         for (int jjj = col; jjj < (col + w_size_); jjj++)
         {
           for (int iii = row; iii < (row + w_size_); iii++)
@@ -541,7 +539,7 @@ void rf_face_detector::FaceDetectorDataProvider<FeatureType, DataSet, LabelType,
 
         vis.removeAllPointClouds();
 
-        pcl_ml::visualization::PointCloudColorHandlerGenericField < pcl_ml::PointXYZI > handler(cloud_intensity2, "intensity");
+        pcl_ml::visualization::PointCloudColorHandlerGenericField < pcl::PointXYZI > handler(cloud_intensity2, "intensity");
         vis.addPointCloud(cloud_intensity2, handler, "cloud");
         vis.spinOnce();
         vis.spin();
@@ -575,5 +573,5 @@ void rf_face_detector::FaceDetectorDataProvider<FeatureType, DataSet, LabelType,
   examples = example_indices;
 }
 
-template class rf_face_detector::FaceDetectorDataProvider<rf_face_detector::FeatureType, std::vector<rf_face_detector::TrainingExample>, float, int,
-    rf_face_detector::RFTreeNode<rf_face_detector::FeatureType> >;
+template class face_detection::FaceDetectorDataProvider<face_detection::FeatureType, std::vector<face_detection::TrainingExample>, float, int,
+    face_detection::RFTreeNode<face_detection::FeatureType> >;

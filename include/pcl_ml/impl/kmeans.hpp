@@ -78,7 +78,7 @@ pcl_ml::Kmeans<PointT>::cluster (std::vector<PointIndices> &clusters)
     return;
   }
 
-  pcl_ml::PointCloud <PointT> point;
+  pcl::PointCloud <PointT> point;
   std::vector<pcl_ml::PCLPointField> fields;
 
   int user_index = -1;
@@ -149,7 +149,7 @@ pcl_ml::Kmeans<PointT>::cluster (std::vector<PointIndices> &clusters)
   
 /*
   int xyz_index = -1;
-  pcl_ml::PointCloud <PointT> point;
+  pcl::PointCloud <PointT> point;
   xyz_index = pcl_ml::getFieldIndex (point, "r", fields);
 
 

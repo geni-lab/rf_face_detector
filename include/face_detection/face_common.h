@@ -43,7 +43,7 @@
 #include <pcl/features/integral_image2D.h>
 
 
-  namespace rf_face_detector
+  namespace face_detection
   {
     class TrainingExample
     {

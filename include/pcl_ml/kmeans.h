@@ -64,7 +64,7 @@ namespace pcl_ml
     typedef PCLBase<PointT> BasePCLBase;
 
     public:
-      typedef pcl_ml::PointCloud<PointT> PointCloud;
+      typedef pcl::PointCloud<PointT> PointCloud;
       typedef typename PointCloud::Ptr PointCloudPtr;
       typedef typename PointCloud::ConstPtr PointCloudConstPtr;
 
